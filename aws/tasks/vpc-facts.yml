@@ -1,0 +1,4 @@
+---
+- name: VPC | Set subnets id as facts
+  set_fact: "{{ item.fact }}={{ lookup('file', item.file) }}"
+  with_items: "{{ facts_to_set }}"

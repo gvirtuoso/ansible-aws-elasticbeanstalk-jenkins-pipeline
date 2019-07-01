@@ -1,0 +1,23 @@
+---
+- name: BASTION | Creating Bastion instances
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "bastion"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/ec2-key.yml
+    - aws/vars/vpc.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/vpc-facts.yml
+    - include_tasks: aws/tasks/ec2-sg.yml
+    - include_tasks: aws/tasks/ec2-instance.yml
