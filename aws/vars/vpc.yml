@@ -1,0 +1,78 @@
+---
+vpc_name: "{{ application }}-vpc"
+vpc_region: "{{ AWS_REGION }}"
+
+# Custom VPC
+vpc_cidr_block: "172.42.0.0/16"
+
+# Public subnets
+public_cidr_1: "172.42.10.0/24"
+public_az_1: "{{ vpc_region }}a"
+public_cidr_2: "172.42.11.0/24"
+public_az_2: "{{ vpc_region }}b"
+public_cidr_3: "172.42.12.0/24"
+public_az_3: "{{ vpc_region }}c"
+public_cidr_4: "172.42.13.0/24"
+public_az_4: "{{ vpc_region }}d"
+public_cidr_5: "172.42.14.0/24"
+public_az_5: "{{ vpc_region }}e"
+public_cidr_6: "172.42.15.0/24"
+public_az_6: "{{ vpc_region }}f"
+
+# Mapping subnets
+vpc_subnets:
+  - cidr: "{{ public_cidr_1 }}"
+    az: "{{ public_az_1 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_1 }}-public-subnet" }
+  - cidr: "{{ public_cidr_2 }}"
+    az: "{{ public_az_2 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_2 }}-public-subnet" }
+  - cidr: "{{ public_cidr_3 }}"
+    az: "{{ public_az_3 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_3 }}-public-subnet" }
+  - cidr: "{{ public_cidr_4 }}"
+    az: "{{ public_az_4 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_4 }}-public-subnet" }
+  - cidr: "{{ public_cidr_5 }}"
+    az: "{{ public_az_5 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_5 }}-public-subnet" }
+  - cidr: "{{ public_cidr_6 }}"
+    az: "{{ public_az_6 }}"
+    resource_tags: { "Name": "{{ vpc_name }}-{{ public_az_6 }}-public-subnet" }
+
+# Routing Table for Public Subnet
+public_subnets:
+  - subnets:
+    - "{{ public_cidr_1 }}"
+    - "{{ public_cidr_2 }}"
+    - "{{ public_cidr_3 }}"
+    - "{{ public_cidr_4 }}"
+    - "{{ public_cidr_5 }}"
+    - "{{ public_cidr_6 }}"
+
+# Assets
+assets_info_basedir: "assets"
+vpc_info_file_path: "{{ assets_info_basedir }}/{{ vpc_name }}.id"
+vpc_public_subnet_az1_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_1}}-public-subnet.id"
+vpc_public_subnet_az2_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_2}}-public-subnet.id"
+vpc_public_subnet_az3_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_3}}-public-subnet.id"
+vpc_public_subnet_az4_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_4}}-public-subnet.id"
+vpc_public_subnet_az5_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_5}}-public-subnet.id"
+vpc_public_subnet_az6_file_path: "{{ assets_info_basedir }}/{{vpc_name}}-{{public_az_6}}-public-subnet.id"
+
+# Facts to set
+facts_to_set:
+  - fact: vpc_id
+    file: "{{ vpc_info_file_path }}"
+  - fact: public_subnet_1
+    file: "{{ vpc_public_subnet_az1_file_path }}"
+  - fact: public_subnet_2
+    file: "{{ vpc_public_subnet_az2_file_path }}"
+  - fact: public_subnet_3
+    file: "{{ vpc_public_subnet_az3_file_path }}"
+  - fact: public_subnet_4
+    file: "{{ vpc_public_subnet_az4_file_path }}"
+  - fact: public_subnet_5
+    file: "{{ vpc_public_subnet_az5_file_path }}"
+  - fact: public_subnet_6
+    file: "{{ vpc_public_subnet_az6_file_path }}"

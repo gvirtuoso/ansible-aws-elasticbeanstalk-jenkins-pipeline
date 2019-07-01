@@ -1,0 +1,18 @@
+- name: VPC | Creating VPC 
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/vpc.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/vpc-subnet.yml
+    - include_tasks: aws/tasks/vpc-route-table.yml

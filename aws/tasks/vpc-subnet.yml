@@ -1,0 +1,38 @@
+---
+- name: VPC | Ensure assets directory exits
+  local_action:
+    path: "{{ assets_info_basedir }}"
+    module: file
+    state: directory
+
+- name: VPC | Creating an AWS VPC inside mentioned Region
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    region: "{{ vpc_region }}"
+    resource_tags: { "Name": "{{ vpc_name }}" }
+  register: vpc_fact
+
+- name: VPC subnets | Creating VPC subnets
+  ec2_vpc_subnet:
+    vpc_id: "{{ vpc_fact.vpc.id }}"
+    cidr: "{{ item.cidr }}"
+    az: "{{ item.az }}"
+    resource_tags: "{{ item.resource_tags }}"
+  with_items: "{{ vpc_subnets }}"
+  register: vpc_subnets_out
+
+- name: VPC subnets | Write vpc id to file inside the vars directory
+  copy:
+    content: "{{ vpc_fact.vpc.id }}"
+    dest: "{{ vpc_info_file_path }}"
+
+- name: VPC subnets | Write subnets id to files inside the vars directory
+  copy:
+    content: "{{ item.subnet.id }}"
+    dest: "{{ assets_info_basedir }}/{{ item.subnet.tags.Name }}.id"
+  with_items: "{{ vpc_subnets_out.results }}"
+
+- name: VPC subnets | Set subnets id as facts
+  set_fact: "{{ item.fact }}={{ lookup('file', item.file) }}"
+  with_items: "{{ facts_to_set }}"
