@@ -1,0 +1,18 @@
+---
+- name: KEY PAIR | Configuring key
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/set-sshkey-chmod.yml
+    - include_tasks: aws/tasks/ec2-keypair.yml

@@ -1,0 +1,5 @@
+---
+- name: SSH | Setting right chmod for key file
+  file:
+    path: ./files/sshkeys/{{ application }}-key
+    mode: 0600

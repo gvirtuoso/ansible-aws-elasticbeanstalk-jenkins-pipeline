@@ -1,0 +1,6 @@
+---
+- name: EC2-KEYPAIR | Create key pair
+  ec2_key:
+    name: "{{ application }}-key"
+    key_material: "{{ lookup('file', './files/sshkeys/{{ application }}-key.pub') }}"
+    state: present
