@@ -1,0 +1,36 @@
+---
+- name: Elastic Beanstalk | Creating the application platform
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "elasticbeanstalk"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/vpc.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/vpc-facts.yml
+    - include_tasks: aws/tasks/elasticbeanstalk-iam.yml
+    - include_tasks: aws/tasks/elasticbeanstalk-create-application.yml
+    - include_tasks: aws/tasks/elasticbeanstalk-create-environment.yml
+    - name: Elastic Beanstalk | Creating the application platform
+      vars:
+        msg: |
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+          Task done!
+          Your application and environments are being created.
+          Check on your AWS account the status of each one.
+
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      debug: msg="{{ msg.split('\n') }}"

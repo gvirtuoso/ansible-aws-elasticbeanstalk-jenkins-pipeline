@@ -1,0 +1,41 @@
+---
+- name: EC2 | Create the Instance(s)
+  ec2:
+    region: "{{ item.vpc_region }}"
+    image: "{{ ec2_ami_id }}"
+    instance_type: "{{ item.instance_type }}"
+    volumes: "{{ item.volumes }}"
+    keypair: "{{ item.key_name }}"
+    ebs_optimized: "{{ item.ebs_optimized | default('False') }}"
+    vpc_subnet_id: "{{ item.vpc_subnet_id }}"
+    assign_public_ip: "{{ item.assign_public_ip }}"
+    group: "{{ item.sg_name }}"
+    count_tag:
+      Name: "{{ item.tag.name }}"
+      AZ: "{{ item.vpc_subnet_id }}"
+      Nickname: "{{ item.tag.nickname | default(service) }}"
+    exact_count: "{{ item.exact_count}}"
+    instance_tags:
+      Name: "{{ item.tag.name }}"
+      AZ: "{{ item.vpc_subnet_id }}"
+      Nickname: "{{ item.tag.nickname | default(service) }}"
+    wait: True
+    wait_timeout: 600
+    user_data: "{{ item.user_data | default('') }}"
+  with_items:
+    - "{{ instances }}"
+
+- name: EC2 | Searching for instances that was created
+  ec2_instance_facts:
+    filters:
+      instance-state-name: running
+      "tag:Name": "{{ item.tag.name }}"
+  with_items:
+    - "{{ instances }}"
+  register: new_instances
+
+- name: "EC2 | Add instances to group {{ host_group_name }}"
+  add_host: name="{{ item.1.private_ip_address }}" groups="{{ host_group_name }}"
+  with_subelements:
+    - "{{ new_instances.results }}"
+    - instances

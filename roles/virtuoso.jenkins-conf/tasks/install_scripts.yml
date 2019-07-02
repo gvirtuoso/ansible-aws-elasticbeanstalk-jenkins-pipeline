@@ -1,0 +1,60 @@
+---
+- name: Jenkins | Getting facts about Disk Usage plugin
+  shell: "sudo cat {{ jenkins_home }}/plugins/disk-usage/META-INF/MANIFEST.MF | grep Plugin-Version | cut -d ' ' -f2"
+  register: output
+- name: Jenkins | Setting facts to Disk Usage plugin
+  set_fact:
+    jenkins_plugin_disk_usage_version_fact: "{{ output.stdout }}"
+
+- name: Jenkins | Getting facts about Git plugin
+  shell: "sudo cat {{ jenkins_home }}/plugins/git/META-INF/MANIFEST.MF | grep Plugin-Version | cut -d ' ' -f2"
+  register: output
+- name: Jenkins | Setting facts to Git plugin
+  set_fact:
+    jenkins_plugin_git_version_fact: "{{ output.stdout }}"
+
+- name: Jenkins | Getting facts about Job DSL plugin
+  shell: "sudo cat {{ jenkins_home }}/plugins/job-dsl/META-INF/MANIFEST.MF | grep Plugin-Version | cut -d ' ' -f2"
+  register: output
+- name: Jenkins | Setting facts to Job DSL plugin
+  set_fact:
+    jenkins_plugin_job_dsl_version_fact: "{{ output.stdout }}"
+
+- name: Jenkins | Getting facts about Workspace Cleanup plugin
+  shell: "sudo cat {{ jenkins_home }}/plugins/ws-cleanup/META-INF/MANIFEST.MF | grep Plugin-Version | cut -d ' ' -f2"
+  register: output
+- name: Jenkins | Setting facts to Workspace Cleanup plugin
+  set_fact:
+    jenkins_plugin_ws_cleanup_version_fact: "{{ output.stdout }}"
+
+- name: Jenkins | Getting facts about Time Stamper plugin
+  shell: "sudo cat {{ jenkins_home }}/plugins/timestamper/META-INF/MANIFEST.MF | grep Plugin-Version | cut -d ' ' -f2"
+  register: output
+- name: Jenkins | Setting facts to Time Stamper plugin
+  set_fact:
+    jenkins_plugin_timestamper_version_fact: "{{ output.stdout }}"
+
+- name: Jenkins | Ensuring that groovy folder is empty
+  shell: "rm -rf {{ jenkins_home }}/init.groovy.d/*"
+
+- name: Jenkins | Installing groovy scripts to run on Jenkins start up
+  template:
+    src: "{{ item }}"
+    dest: "{{ jenkins_home }}/init.groovy.d/{{ item }}"
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+  with_items:
+    - 001.manage_jenkins_config_system.groovy
+    - 002.job_dsl.groovy
+
+- name: Jenkins | Restarting
+  service:
+    name: jenkins
+    state: restarted
+
+- name: Waiting 3 minutes for fully Jenkins startup
+  pause: seconds=180
+
+- name: Jenkins | Cleaning the groovy's folder
+  shell: "rm -rf {{ jenkins_home }}/init.groovy.d/*"

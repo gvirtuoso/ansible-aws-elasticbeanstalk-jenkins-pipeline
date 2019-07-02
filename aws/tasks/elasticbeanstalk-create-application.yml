@@ -1,0 +1,12 @@
+---
+- name: Elastic Beanstalk | Creating application
+  aws_elasticbeanstalk_app:
+    app_name: "{{ item.template_ApplicationName }}"
+    state: present
+  with_items: "{{ elasticbeanstalk_apps }}"
+
+- name: Elastic Beanstalk | Creating S3 bucket for application version
+  aws_s3:
+    bucket: "{{ item.template_s3_bucket }}"
+    mode: create
+  with_items: "{{ elasticbeanstalk_apps }}"

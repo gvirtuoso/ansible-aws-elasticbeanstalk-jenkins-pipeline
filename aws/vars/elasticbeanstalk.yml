@@ -1,0 +1,38 @@
+---
+app_001: "docker-sample-nginx"
+
+elasticbeanstalk_apps:
+  - template_ApplicationName: "{{ app_001 }}"
+    template_s3_bucket: "{{ application }}-{{ app_001 }}-application-versions"
+    template_TemplateName: "{{ application }}-{{ app_001 }}-template"
+    template_SolutionStackName: "64bit Amazon Linux 2018.03 v2.15.0 running Multi-container Docker 18.06.1-ce (Generic)"
+    template_opt_autoscaling_MinSize: 1
+    template_opt_autoscaling_MaxSize: 10
+    template_opt_autoscaling_EC2KeyName: "{{ application }}-key"
+    template_opt_autoscaling_IamInstanceProfile: "elasticbeanstalk-iamrole"
+    template_opt_autoscaling_InstanceType: "t3a.nano"
+    template_opt_autoscaling_subnets: "{{ public_subnet_1 }},{{ public_subnet_2 }},{{ public_subnet_3 }},{{ public_subnet_4 }},{{ public_subnet_5 }},{{ public_subnet_6 }}"
+    template_opt_elb_VPCId: "{{ vpc_id }}"
+    template_opt_elb_ELBSubnets: "{{ public_subnet_1 }},{{ public_subnet_2 }},{{ public_subnet_3 }},{{ public_subnet_4 }},{{ public_subnet_5 }},{{ public_subnet_6 }}"
+    template_opt_elb_healthcheck: "HTTP:80/"
+    template_opt_elb_timeout: "15"
+    template_opt_elb_interval: "20"
+    template_environments:
+      - dev
+      - prod
+
+###########################################################################################################################
+#  How to check available Elastic Beanstalk Solution Stack Name for Multi-container Docker                                #
+###########################################################################################################################
+#                                                                                                                         #
+#                                                                                                                         #
+#  Listing available stacks:                                                                                              #
+#    $ aws elasticbeanstalk list-available-solution-stacks | grep "Multi-container Docker"                                #
+#                                                                                                                         #
+#                                                                                                                         #
+#  You will get an output like that:                                                                                      #
+#    $ "64bit Amazon Linux 2018.03 v2.15.0 running Multi-container Docker 18.06.1-ce (Generic)",                          #
+#    $      "SolutionStackName": "64bit Amazon Linux 2018.03 v2.15.0 running Multi-container Docker 18.06.1-ce (Generic)" #
+#                                                                                                                         #
+#                                                                                                                         #
+###########################################################################################################################

@@ -1,0 +1,14 @@
+---
+java_version: 8
+java_subversion: 131
+java_build_custom: 11
+jdk_version_detail_custom: "{{ java_version }}u{{ java_subversion }}-b{{ java_build_custom }}"
+jdk_tarball_hash: d54c1d3a095b4ff2b6607d096fa80163
+jdk_tarball_url: "http://download.oracle.com/otn-pub/java/jdk/{{ jdk_version_detail_custom }}/{{ jdk_tarball_hash }}/{{ jdk_tarball_file }}"
+
+java_download_path: /tmp
+java_download_from_oracle: true
+java_remove_download: true
+java_install_jce: false
+
+java_set_javahome: true
