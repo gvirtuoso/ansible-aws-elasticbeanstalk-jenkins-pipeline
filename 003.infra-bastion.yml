@@ -21,3 +21,16 @@
     - include_tasks: aws/tasks/vpc-facts.yml
     - include_tasks: aws/tasks/ec2-sg.yml
     - include_tasks: aws/tasks/ec2-instance.yml
+    - name: BASTION | Creating Bastion instances
+      vars:
+        msg: |
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+          Task done!
+          Now you can connect to your bastion instance using the command below
+          $ AWS_PROFILE=<profile_name> ssh -F ssh.cfg bastion
+
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      debug: msg="{{ msg.split('\n') }}"
