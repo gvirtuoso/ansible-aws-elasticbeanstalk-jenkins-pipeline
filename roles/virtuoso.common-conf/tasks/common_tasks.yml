@@ -1,0 +1,21 @@
+---
+  - name: COMMON | Install management ssh key
+    copy:
+      src: ./files/sshkeys/virtuoso-key
+      dest: /home/ubuntu/.ssh/id_rsa
+      owner: ubuntu
+      group: ubuntu
+      mode: 0600
+  
+  - name: COMMON | Configure users for build images with docker
+    command: "{{ item }}"
+    with_items:
+      - usermod -aG docker ubuntu
+
+  - name: COMMON | Install additional softwares
+    apt:
+      name: ['htop', 'unzip']
+      state: latest
+      force: yes
+      update_cache: yes
+      cache_valid_time: 3600

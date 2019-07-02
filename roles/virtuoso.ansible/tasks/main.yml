@@ -1,0 +1,13 @@
+---
+- name: Add ansible repository.
+  apt_repository: repo='{{ ansible_apt_repository }}'
+
+- name: Update apt cache.
+  apt: update_cache=true cache_valid_time=86400
+
+- name: Install Ansible.
+  apt:
+    name: "ansible={{ ansible_apt_version }}"
+    state: "{{ ansible_apt_package_state }}"
+    force_apt_get: yes
+    update_cache: yes

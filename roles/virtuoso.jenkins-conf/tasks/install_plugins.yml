@@ -1,0 +1,9 @@
+---
+- name: Jenkins | Installing plugins
+  ignore_errors: yes
+  jenkins_plugin:
+    url: "http://localhost:8080"
+    url_username: "{{ jenkins_admin_username }}"
+    url_password: "{{ jenkins_admin_password }}"
+    name: "{{ item }}"
+  with_items: "{{ jenkins_plugins_list }}"

@@ -1,0 +1,21 @@
+---
+- name: CI | Configuring reverse proxy for Jenkins
+  template:
+    src: nginx-jenkins.j2
+    dest: /etc/nginx/sites-available/jenkins
+
+- name: CI | Unlink default conf
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: CI | Link jenkins conf
+  file:
+    src: /etc/nginx/sites-available/jenkins
+    dest: /etc/nginx/sites-enabled/jenkins
+    state: link
+
+- name: CI | Restarting nginx
+  service:
+    name: nginx
+    state: restarted

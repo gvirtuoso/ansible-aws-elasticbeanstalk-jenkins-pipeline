@@ -1,0 +1,10 @@
+---
+  - name: Python | Installing some packages
+    command: "pip install -U {{ item }}"
+    with_items:
+      - pip
+      - boto
+      - boto3
+      - awscli
+      - docker-py
+      - lxml
