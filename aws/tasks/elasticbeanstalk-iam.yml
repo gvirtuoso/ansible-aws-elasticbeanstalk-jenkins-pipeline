@@ -1,0 +1,17 @@
+---
+- name: Elastic Beanstalk | Create IAM role
+  iam:
+    name: "elasticbeanstalk-iamrole"
+    iam_type: role
+    state: present
+
+- name: Elastic Beanstalk | Attach policies to the role
+  shell: "aws iam attach-role-policy
+            --policy-arn {{ item }}
+            --role-name elasticbeanstalk-iamrole"
+  with_items:
+    - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    - "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+    - "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
+    - "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
+    - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
