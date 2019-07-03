@@ -45,7 +45,7 @@ instances:
         delete_on_termination : true
 
 swap_swappiness: 10
-swap_file_size_mb: '4096'
+swap_file_size_mb: '8192'
 
 jenkins_version: "2.164.3"
 jenkins_pkg_url: "https://pkg.jenkins.io/debian-stable/binary"
@@ -55,21 +55,26 @@ jenkins_admin_password: "admin"
 
 jenkins_plugins_list:
   - ansible
+  - blueocean
   - build-environment
   - build-monitor-plugin
   - buildtriggerbadge
+  - copyartifact
   - disk-usage
   - envinject
-  - git
-  - github
-  - greenballs 
+  - github-oauth
+  - greenballs
   - job-dsl
+  - job-restrictions
   - jobConfigHistory
   - parameterized-trigger
+  - pipeline-aws
   - progress-bar-column-plugin
   - publish-over-ssh
   - role-strategy
   - saferestart
+  - sidebar-link
+  - ssh-slaves
   - timestamper
   - workflow-aggregator
   - ws-cleanup
