@@ -1,0 +1,11 @@
+---
+- name: EC2 | Waiting for instance to be ready
+  wait_for:
+    host: "{{ item.private_ip_address }}"
+    port: 22
+    delay: 10
+    timeout: 120
+    state: started
+  delegate_to: ubuntu@bastion
+  with_items:
+    - "{{ new_instances.instances }}"

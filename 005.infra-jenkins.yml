@@ -23,6 +23,7 @@
     - include_tasks: aws/tasks/ec2-keypair.yml
     - include_tasks: aws/tasks/ec2-sg.yml
     - include_tasks: aws/tasks/ec2-instance.yml
+    - include_tasks: aws/tasks/ec2-instance-warmup.yml
 
 - name: CI | Instance software setup
   hosts: "{{ host_group_name }}"
