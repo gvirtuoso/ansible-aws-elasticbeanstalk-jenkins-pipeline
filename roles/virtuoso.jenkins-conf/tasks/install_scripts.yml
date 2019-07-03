@@ -54,8 +54,8 @@
     name: jenkins
     state: restarted
 
-- name: Waiting 3 minutes for fully Jenkins startup
-  pause: seconds=180
+- name: Waiting for fully Jenkins startup
+  pause: seconds=60
 
 - name: Jenkins | Cleaning the groovy's folder
   shell: "rm -rf {{ jenkins_home }}/init.groovy.d/*"
