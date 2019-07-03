@@ -1,0 +1,4 @@
+---
+ecs_container_name: "{{ service }}-{{ branch }}"
+ecs_container_image: "{{ ecr.repository.repositoryUri }}"
+ecs_container_environment: []
