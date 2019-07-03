@@ -30,6 +30,7 @@ if ( envVarsNodePropertyList == null || envVarsNodePropertyList.size() == 0 ) {
   envVars.clear()
 }
 
+envVars.put("AWS_PROFILE", "{{ profile_name }}")
 envVars.put("JAVA_HOME", "/usr/lib/jvm/default-java") 
 
 // ----------------------------------------------
