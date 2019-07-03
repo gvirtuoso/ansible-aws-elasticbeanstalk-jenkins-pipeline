@@ -16,3 +16,15 @@
   tasks:
     - include_tasks: aws/tasks/vpc-subnet.yml
     - include_tasks: aws/tasks/vpc-route-table.yml
+    - name: VPC | Creating VPC 
+      vars:
+        msg: |
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+          Task done!
+          Your new VPC infrastructure is ready to use.
+
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      debug: msg="{{ msg.split('\n') }}"

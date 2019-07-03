@@ -46,15 +46,16 @@
     mode: 0600
   with_items:
     - 001.manage_jenkins_config_system.groovy
-    - 002.job_dsl.groovy
+    - 002.manage_jenkins_global_security.groovy
+    - 003.job_dsl.groovy
 
 - name: Jenkins | Restarting
   service:
     name: jenkins
     state: restarted
 
-- name: Waiting 3 minutes for fully Jenkins startup
-  pause: seconds=180
+- name: Waiting for fully Jenkins startup
+  pause: seconds=60
 
 - name: Jenkins | Cleaning the groovy's folder
   shell: "rm -rf {{ jenkins_home }}/init.groovy.d/*"

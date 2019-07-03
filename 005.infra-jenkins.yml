@@ -23,6 +23,7 @@
     - include_tasks: aws/tasks/ec2-keypair.yml
     - include_tasks: aws/tasks/ec2-sg.yml
     - include_tasks: aws/tasks/ec2-instance.yml
+    - include_tasks: aws/tasks/ec2-instance-warmup.yml
 
 - name: CI | Instance software setup
   hosts: "{{ host_group_name }}"
@@ -43,12 +44,12 @@
     AWS_REGION: "{{ AWS_REGION }}"
   roles:
     - roles/geerlingguy.swap
+    - roles/william-yeh.oracle_java
     - roles/geerlingguy.docker
     - roles/geerlingguy.git
     - roles/geerlingguy.pip
     - roles/geerlingguy.nginx
     - roles/geerlingguy.jenkins
-    - roles/william-yeh.oracle_java
     - roles/virtuoso.ansible
     - roles/virtuoso.nginx-conf
     - roles/virtuoso.jenkins-conf
@@ -74,6 +75,11 @@
     AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
     AWS_REGION: "{{ AWS_REGION }}"
   tasks:
+    - name: EC2 | Restarting instance
+      ec2:
+        instance_tags:
+          "tag:Name": "{{ application }}-{{ service }}"
+        state: restarted
     - name: EC2 | Searching for ci/cd instances
       ec2_instance_facts:
         filters:
@@ -87,7 +93,8 @@
           @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
           Task done!
-          You can access your CI/CD server using the URL below
+          Wait a few seconds while the instance reboot to apply some configurations.
+          After it, you can access your CI/CD server using the URL below
           http://{{ ec2_instance_fact.instances[0].public_ip_address }}
 
           @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

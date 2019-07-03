@@ -27,8 +27,8 @@ ec2_user_data: |
               sudo sed -i '/#   StrictHostKeyChecking ask/c\    StrictHostKeyChecking no' /etc/ssh/ssh_config
 
 instances:
-  - instance_type: t2.medium
-    ebs_optimized: false
+  - instance_type: m5.large
+    ebs_optimized: true
     user_data: "{{ ec2_user_data }}"
     tag:
       name: "{{ application }}-{{ service }}"
@@ -45,7 +45,7 @@ instances:
         delete_on_termination : true
 
 swap_swappiness: 10
-swap_file_size_mb: '4096'
+swap_file_size_mb: '8192'
 
 jenkins_version: "2.164.3"
 jenkins_pkg_url: "https://pkg.jenkins.io/debian-stable/binary"
@@ -55,20 +55,26 @@ jenkins_admin_password: "admin"
 
 jenkins_plugins_list:
   - ansible
+  - blueocean
   - build-environment
   - build-monitor-plugin
   - buildtriggerbadge
+  - copyartifact
   - disk-usage
   - envinject
-  - git
-  - greenballs 
+  - github-oauth
+  - greenballs
   - job-dsl
+  - job-restrictions
   - jobConfigHistory
   - parameterized-trigger
+  - pipeline-aws
   - progress-bar-column-plugin
   - publish-over-ssh
   - role-strategy
   - saferestart
+  - sidebar-link
+  - ssh-slaves
   - timestamper
   - workflow-aggregator
   - ws-cleanup

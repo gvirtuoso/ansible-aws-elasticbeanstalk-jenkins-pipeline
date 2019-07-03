@@ -1,0 +1,102 @@
+---
+- name: ECR | Get ECR Reference
+  ecs_ecr:
+    name: "{{ application }}/{{ service }}-{{ branch }}"
+  register: ecr
+
+- name: Elastic Beanstalk | Generating Application Version File Name
+  shell: "date '+%Y%m%d-%H%M%S'"
+  register: output
+- set_fact: file_timestamp="{{ output.stdout }}"
+- set_fact: elasticbeanstalk_application_version_file_name="{{ file_timestamp }}.zip"
+
+- name: Elastic Beanstalk | Application Version File Name Output
+  vars:
+      msg: |
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+        {{ elasticbeanstalk_application_version_file_name }}
+        
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  debug:
+      msg: "{{ msg.split('\n') }}"
+
+- name: Elastic Beanstalk | Creating folder infrastructure
+  file:
+    path: "tmp/elasticbeanstalk/{{ service }}"
+    state: directory
+
+- name: Elastic Beanstalk | Generating Deploy Definition file
+  template:
+    src: elasticbeanstalk-dockerrun.aws.j2
+    dest: "tmp/elasticbeanstalk/{{ service }}/Dockerrun.aws.json"
+
+- name: Elastic Beanstalk | Creating deployment file
+  archive:
+    path: "tmp/elasticbeanstalk/{{ service }}/."
+    dest: "tmp/elasticbeanstalk/{{ service }}/{{ elasticbeanstalk_application_version_file_name }}"
+    format: zip
+
+- name: Elastic Beanstalk | Sending Deploy Definitions to S3
+  aws_s3:
+    bucket: "{{ application }}-{{ service }}-application-versions"
+    object: "{{ branch }}/{{ elasticbeanstalk_application_version_file_name }}"
+    src: "tmp/elasticbeanstalk/{{ service }}/{{ elasticbeanstalk_application_version_file_name }}"
+    mode: put
+
+- name: Elastic Beanstalk | Deleting temp files
+  file:
+    path: "tmp/elasticbeanstalk/{{ service }}"
+    state: absent
+
+- name: Elastic Beanstalk | Registering Application Version file definition
+  shell: "aws elasticbeanstalk create-application-version 
+            --application-name {{ service }} 
+            --version-label {{ file_timestamp }} 
+            --source-bundle S3Bucket='{{ application }}-{{ service }}-application-versions',S3Key='{{ branch }}/{{ elasticbeanstalk_application_version_file_name }}'"
+
+- name: Local| Getting current date
+  shell: "date +%Y-%m-%dT%H:%M:%S.000Z"
+  register: local_current_datetime_output
+- set_fact: local_current_datetime="{{ local_current_datetime_output.stdout }}"
+
+- name: Elastic Beanstalk | Deploying version to environment
+  shell: "aws elasticbeanstalk update-environment
+            --application-name {{ service }}
+            --environment-name {{ service }}-{{ env }}
+            --version-label {{ file_timestamp }}"
+
+- name: Block to check if the process has started
+  block:
+    - name: Elastic Beanstalk | Waiting for deployment process start
+      shell: "aws elasticbeanstalk describe-events 
+                --application-name {{ service }}
+                --environment-name {{ service }}-{{ env }}
+                --query 'Events[?Message==`Environment update is starting.`] | [0]'"
+      register: eb_last_update_json_output
+      until: (((eb_last_update_json_output.stdout | from_json).EventDate[:19] | to_datetime(date_format)) - (local_current_datetime[:19] | to_datetime(date_format))).total_seconds() > 0
+      retries: 3
+      delay: 10
+  rescue:
+    - set_fact: aws_deploy_success=false
+    - debug: msg="Deployment process has not started"
+- set_fact: eb_last_update_json="{{ eb_last_update_json_output.stdout | from_json }}"
+  when: aws_deploy_success == true
+
+- name: Block to check if the process has finished
+  block:
+    - name: Elastic Beanstalk | Waiting for deployment process to complete
+      shell: "aws elasticbeanstalk describe-events
+                --application-name {{ service }}
+                --environment-name {{ service }}-{{ env }}
+                --query 'Events[?Message==`Environment update completed successfully.` && RequestId==`{{ eb_last_update_json.RequestId }}`]'"
+      register: eb_update_complete_json_output
+      until: ((eb_update_complete_json_output.stdout | from_json) | length) > 0
+      retries: 20
+      delay: 30
+      when: aws_deploy_success == true
+  rescue:
+    - set_fact: aws_deploy_success=false
+    - debug: msg="Deployment process has not completed"

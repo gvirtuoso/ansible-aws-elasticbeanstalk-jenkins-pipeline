@@ -1,0 +1,21 @@
+---
+- name: ECR | Get ECR Reference
+  ecs_ecr:
+    name: "{{ application }}/{{ service }}-{{ branch }}"
+  register: ecr
+
+- name: ECR | Login
+  shell: "$(AWS_PROFILE={{ AWS_PROFILE }} aws ecr get-login --no-include-email --region {{ AWS_REGION }})"
+
+- name: ECR | Build a docker image and push it
+  docker_image:
+    docker_api_version: auto
+    path: "tmp/{{ service }}"
+    name: "{{ ecr.repository.repositoryUri }}"
+    push: yes
+    force: yes
+
+- name: ECR | Deleting temp files
+  file:
+    path: "tmp/{{ service }}"
+    state: absent

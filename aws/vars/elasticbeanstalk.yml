@@ -10,7 +10,7 @@ elasticbeanstalk_apps:
     template_opt_autoscaling_MaxSize: 10
     template_opt_autoscaling_EC2KeyName: "{{ application }}-key"
     template_opt_autoscaling_IamInstanceProfile: "elasticbeanstalk-iamrole"
-    template_opt_autoscaling_InstanceType: "t3a.nano"
+    template_opt_autoscaling_InstanceType: "t2.micro"
     template_opt_autoscaling_subnets: "{{ public_subnet_1 }},{{ public_subnet_2 }},{{ public_subnet_3 }},{{ public_subnet_4 }},{{ public_subnet_5 }},{{ public_subnet_6 }}"
     template_opt_elb_VPCId: "{{ vpc_id }}"
     template_opt_elb_ELBSubnets: "{{ public_subnet_1 }},{{ public_subnet_2 }},{{ public_subnet_3 }},{{ public_subnet_4 }},{{ public_subnet_5 }},{{ public_subnet_6 }}"

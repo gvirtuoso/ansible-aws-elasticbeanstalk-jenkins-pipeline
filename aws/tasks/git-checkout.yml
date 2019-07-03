@@ -1,0 +1,12 @@
+---
+- name: Git | Ensure checkout directory exists
+  file:
+    path: "tmp/{{ service }}"
+    state: directory
+
+- name: Git | Clone the repository
+  git:
+    dest: "tmp/{{ service }}"
+    repo: '{{ repository }}'
+    version: '{{ branch }}'
+    force: yes
