@@ -106,7 +106,6 @@ String jobSCMCheckerDescription = new StringBuilder()
 job(jobSCMCheckerName) {
     displayName(jobSCMCheckerDisplayName)
     description(jobSCMCheckerDescription)
-    label("scm_checker")
     logRotator {
         numToKeep(10)
         artifactNumToKeep(1)
@@ -124,7 +123,6 @@ job(jobSCMCheckerName) {
             scmpoll_spec("* * * * *")
         }
     }
-    quietPeriod(300)
     wrappers {
         timestamps()
     }
