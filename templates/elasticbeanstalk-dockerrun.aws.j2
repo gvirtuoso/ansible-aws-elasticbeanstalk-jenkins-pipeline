@@ -1,0 +1,51 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [],
+  "containerDefinitions": [
+    {
+      "name": "{{ ecs_container_name }}",
+      "image": "{{ ecs_container_image }}",
+      "environment": [
+{% for env in ecs_container_environment %}
+          {
+            "name": "{{ env.name }}",
+            "value": "{{ env.value }}"
+          },
+{% endfor %}
+          {
+            "name": "APPLICATION_VERSION_FILE_NAME",
+            "value": "{{ elasticbeanstalk_application_version_file_name }}"
+          }
+      ],
+      "essential": true,
+      "memory": {{ ecs_container_memory }},
+      "mountPoints": [],
+      "portMappings": [
+          {
+            "hostPort": {{ ecs_container_hostPort }},
+            "containerPort": {{ ecs_container_containerPort }},
+            "protocol": "tcp"
+          }
+      ],
+      "links": null,
+      "volumesFrom": [],
+      "extraHosts": null,
+      "dnsServers": null,
+      "disableNetworking": null,
+      "dnsSearchDomains": null,
+      "hostname": null,
+      "entryPoint": null,
+      "ulimits": null,
+      "dockerSecurityOptions": null,
+      "workingDirectory": null,
+      "readonlyRootFilesystem": null,
+      "command": null,
+      "user": null,
+      "dockerLabels": null,
+      "logConfiguration": null,
+      "cpu": 1,
+      "privileged": null,
+      "memoryReservation": null
+    }
+  ]
+}

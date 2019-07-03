@@ -1,0 +1,44 @@
+---
+- name: Elastic Beanstalk | Ensuring configuration template not exists
+  shell: "aws elasticbeanstalk delete-configuration-template
+            --application-name {{ item.template_ApplicationName }}
+            --template-name {{ item.template_TemplateName }}"
+  with_items: "{{ elasticbeanstalk_apps }}"
+
+- name: Elastic Beanstalk | Generating configuration template
+  template:
+    src: elasticbeanstalk-template.j2
+    dest: "assets/{{ item.template_TemplateName }}.json"
+  with_items: "{{ elasticbeanstalk_apps }}"
+
+- name: Elastic Beanstalk | Creating configuration template
+  shell: "aws elasticbeanstalk create-configuration-template 
+              --cli-input-json file://./assets/{{ item.template_TemplateName }}.json"
+  with_items: "{{ elasticbeanstalk_apps }}"
+
+- name: Elastic Beanstalk | Environment management
+  block:
+    - name: Elastic Beanstalk | Creating environment
+      shell: "aws elasticbeanstalk create-environment 
+                --application-name {{ item.0.template_ApplicationName }} 
+                --environment-name {{ item.0.template_ApplicationName}}-{{ item.1 }}
+                --cname-prefix {{ item.0.template_ApplicationName}}-{{ item.1 }}
+                --template-name {{ item.0.template_TemplateName }}"
+      with_subelements:
+        - "{{ elasticbeanstalk_apps }}"
+        - template_environments
+  rescue:
+    - name: Elastic Beanstalk | Error on environment creation
+      vars:
+        msg: |
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+          Elastic Beanstalk Error
+          Please check the output error to identify which actions can solve the problem.
+          Check if the environment for this application already exist. 
+          If YES, access your AWS account and terminate the environment before generate again.
+
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      debug: msg="{{ msg.split('\n') }}"

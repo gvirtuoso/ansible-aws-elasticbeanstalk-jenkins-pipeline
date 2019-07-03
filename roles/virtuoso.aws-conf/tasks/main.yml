@@ -1,0 +1,24 @@
+---
+- name: CI | ensure .aws directory
+  file:
+    path: '{{ jenkins_home }}/.aws'
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+
+- name: CI | Install AWS Config
+  template:
+    src: "config.j2"
+    dest: "{{ jenkins_home }}/.aws/config"
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+
+- name: CI | Install AWS Credentials
+  template:
+    src: "credentials.j2"
+    dest: "{{ jenkins_home }}/.aws/credentials"
+    owner: jenkins
+    group: jenkins
+    mode: 0600

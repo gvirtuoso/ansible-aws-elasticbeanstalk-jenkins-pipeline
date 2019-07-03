@@ -1,0 +1,46 @@
+---
+- hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "docker-sample-nginx"
+    repository: https://github.com/gvirtuoso/docker-sample-nginx.git
+    branch: "{{ branch }}" # --extra-vars (Passed by CI Server)
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/git-checkout.yml
+    - include_tasks: aws/tasks/ecs-build.yml
+
+- hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "docker-sample-nginx"
+    branch: "{{ branch }}" # --extra-vars (Passed by CI Server)
+    env: "{{ env }}" # --extra-vars (Passed by CI Server)
+    date_format: "%Y-%m-%dT%H:%M:%S"
+    aws_deploy_success: true
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/container-environment.yml
+    - aws/vars/container-environment-{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/elasticbeanstalk-deploy.yml
+    - fail:
+        msg: "The deployment process has failed!"
+      when: aws_deploy_success == false

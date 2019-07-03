@@ -1,0 +1,32 @@
+---
+- name: VPC routes | Search main route tables
+  ec2_vpc_route_table_facts:
+    filters:
+      vpc-id: "{{ vpc_id }}"
+      "association.main": "true"
+  register: route_tables
+
+- name: VPC routes | Create Internet Gateway      
+  ec2_vpc_igw: 
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: "{{ application }}-igw"
+    state: present
+  register: igw
+
+- name:  VPC routes | Set up public subnet route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: "{{ application }}-public-rt"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+    subnets:
+      - "{{ public_subnet_1 }}"
+      - "{{ public_subnet_2 }}"
+      - "{{ public_subnet_3 }}"
+      - "{{ public_subnet_4 }}"
+      - "{{ public_subnet_5 }}"
+      - "{{ public_subnet_6 }}"
+  register: public_route_table

@@ -1,0 +1,102 @@
+---
+- name: CI | Creating Jenkins instance
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/ec2-key.yml
+    - aws/vars/vpc.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - include_tasks: aws/tasks/vpc-facts.yml
+    - include_tasks: aws/tasks/set-sshkey-chmod.yml
+    - include_tasks: aws/tasks/ec2-keypair.yml
+    - include_tasks: aws/tasks/ec2-sg.yml
+    - include_tasks: aws/tasks/ec2-instance.yml
+    - include_tasks: aws/tasks/ec2-instance-warmup.yml
+
+- name: CI | Instance software setup
+  hosts: "{{ host_group_name }}"
+  become: true
+  remote_user: ubuntu
+  vars:
+    ENV: "{{ AWS_PROFILE }}"
+    application: "pointr"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  roles:
+    - roles/geerlingguy.swap
+    - roles/william-yeh.oracle_java
+    - roles/geerlingguy.docker
+    - roles/geerlingguy.git
+    - roles/geerlingguy.pip
+    - roles/geerlingguy.nginx
+    - roles/geerlingguy.jenkins
+    - roles/virtuoso.ansible
+    - roles/virtuoso.nginx-conf
+    - roles/virtuoso.jenkins-conf
+    - roles/virtuoso.aws-conf
+    - roles/virtuoso.common-conf
+
+- name: CI | Finalizing process
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/ec2-key.yml
+    - aws/vars/vpc.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - name: EC2 | Restarting instance
+      ec2:
+        instance_tags:
+          "tag:Name": "{{ application }}-{{ service }}"
+        state: restarted
+    - name: EC2 | Searching for ci/cd instances
+      ec2_instance_facts:
+        filters:
+          instance-state-name: running
+          "tag:Name": "{{ application }}-{{ service }}"
+      register: ec2_instance_fact
+    - name: CI | Finalizing process
+      vars:
+        msg: |
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+          Task done!
+          Wait a few seconds while the instance reboot to apply some configurations.
+          After it, you can access your CI/CD server using the URL below
+          http://{{ ec2_instance_fact.instances[0].public_ip_address }}
+
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      debug: msg="{{ msg.split('\n') }}"

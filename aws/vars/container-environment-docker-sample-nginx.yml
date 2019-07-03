@@ -1,0 +1,4 @@
+---
+ecs_container_memory: 800
+ecs_container_hostPort: 80
+ecs_container_containerPort: 80

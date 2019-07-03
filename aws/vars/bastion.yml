@@ -1,0 +1,41 @@
+---
+host_group_name: "{{ service }}_group"
+
+security_groups:
+  - sg_name: "{{ application }}-{{ service }}-sg"
+    sg_description: This sg is for bastion instance
+    sg_rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        from_port: 0
+        to_port: 65535
+        cidr_ip: 0.0.0.0/0
+
+ec2_ami_id: ami-0a313d6098716f372 # ubuntu-18.04 (64-bit (x86)) - 2019-05-09
+ec2_user_data: |
+              #!/bin/bash
+              sudo apt-get -y update
+              sudo apt-get -y install python-minimal jq
+              sudo sed -i '/#   StrictHostKeyChecking ask/c\    StrictHostKeyChecking no' /etc/ssh/ssh_config
+
+instances:
+  - instance_type: t3a.nano
+    ebs_optimized: false
+    user_data: "{{ ec2_user_data }}"
+    tag:
+      name: "{{ application }}-{{ service }}"
+    exact_count: 1
+    vpc_region: "{{ vpc_region }}"
+    sg_name: "{{ security_groups[0].sg_name }}"
+    key_name: "{{ key_name }}"
+    vpc_subnet_id: "{{ public_subnet_1 }}"
+    assign_public_ip: true
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: 8
+        delete_on_termination : true
