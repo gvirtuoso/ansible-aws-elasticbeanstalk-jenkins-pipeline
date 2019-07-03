@@ -27,8 +27,8 @@ ec2_user_data: |
               sudo sed -i '/#   StrictHostKeyChecking ask/c\    StrictHostKeyChecking no' /etc/ssh/ssh_config
 
 instances:
-  - instance_type: t2.medium
-    ebs_optimized: false
+  - instance_type: m5.large
+    ebs_optimized: true
     user_data: "{{ ec2_user_data }}"
     tag:
       name: "{{ application }}-{{ service }}"
@@ -61,6 +61,7 @@ jenkins_plugins_list:
   - disk-usage
   - envinject
   - git
+  - github
   - greenballs 
   - job-dsl
   - jobConfigHistory
