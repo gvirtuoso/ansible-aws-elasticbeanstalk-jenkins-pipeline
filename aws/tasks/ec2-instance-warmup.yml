@@ -8,4 +8,4 @@
     state: started
   delegate_to: ubuntu@bastion
   with_items:
-    - "{{ new_instances.instances }}"
+    - "{{ new_instances.results[0].instances }}"
