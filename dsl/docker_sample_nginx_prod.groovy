@@ -5,14 +5,16 @@ String baseBranch = "master"
 String baseEnv = "prod"
 
 String jobDeployName = new StringBuilder()
+    .append(baseEnv)
+    .append("_")
     .append("deploy")
     .append("_")
     .append(projectName)
-    .append("_")
-    .append(baseEnv)
     .toString()
  
  String jobDeployDisplayName = new StringBuilder()
+    .append(baseEnv.toUpperCase())
+    .append(" - ")
     .append("Deploy")
     .append(" - ")
     .append(projectOwner)
@@ -20,14 +22,7 @@ String jobDeployName = new StringBuilder()
     .append(projectName)
     .toString()
 
-String jobDeployDescription = new StringBuilder()
-    .append("Deploy ")
-    .append(projectOwner)
-    .append("/")
-    .append(projectName)
-    .append(" on ")
-    .append(baseEnv.toUpperCase())
-    .toString()
+String jobDeployDescription = jobDeployDisplayName
 
 job(jobDeployName) {
     displayName(jobDeployDisplayName)
@@ -79,29 +74,24 @@ job(jobDeployName) {
 }
 
 String jobSCMCheckerName = new StringBuilder()
+    .append(baseEnv)
+    .append("_")
     .append("scm_checker")
     .append("_")
     .append(projectName)
-    .append("_")
-    .append(baseEnv)
     .toString()
 
 String jobSCMCheckerDisplayName = new StringBuilder()
+    .append(baseEnv.toUpperCase())
+    .append(" - ")
     .append("SCM Checker")
     .append(" - ")
     .append(projectOwner)
     .append("/")
     .append(projectName)
-    .append(" on ")
-    .append(baseEnv.toUpperCase())
     .toString()
 
-String jobSCMCheckerDescription = new StringBuilder()
-    .append("Source Control Management checker for ")
-    .append(projectOwner)
-    .append("/")
-    .append(projectName)
-    .toString()
+String jobSCMCheckerDescription = jobSCMCheckerDisplayName
 
 job(jobSCMCheckerName) {
     displayName(jobSCMCheckerDisplayName)
