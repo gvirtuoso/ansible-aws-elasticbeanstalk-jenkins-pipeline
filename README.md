@@ -270,6 +270,26 @@ The new version deployed.
 
 ---
 
+## 6) Dropping the resources
+
+You should drop the following resources:
+- Elastic Beanstalk
+- EC2 Instances
+- EC2 KeyPair
+- VPC
+
+I'll list below some AWS screens to access and check if all the extra resources was dropped.
+- CloudFormation
+- CloudWatch Alarms
+- CloudWatch Logs
+- AWS ECS - Clusters
+- AWS ECS - Task Definitions
+- AWS ECR
+- S3 (Some buckets need to have the Bucket Policy deleted before)
+- IAM Role
+
+---
+
 ## Conclusion
 
 Here you have a full project to provisioning a CI/CD infrastructure.
