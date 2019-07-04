@@ -31,14 +31,14 @@
     - name: Elastic Beanstalk | Error on environment creation
       vars:
         msg: |
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-          Elastic Beanstalk Error
-          Please check the output error to identify which actions can solve the problem.
-          Check if the environment for this application already exist. 
-          If YES, access your AWS account and terminate the environment before generate again.
-
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                            .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                            .
+          .                                                                                         .
+          . Elastic Beanstalk Error!                                                                .
+          . Please check the output error to identify which actions can solve the problem.          .
+          . Check if the environment for this application already exist.                            .
+          . If YES, access your AWS account and terminate the environment before generate again.    .
+          .                                                                                         .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                            .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                            .
       debug: msg="{{ msg.split('\n') }}"
