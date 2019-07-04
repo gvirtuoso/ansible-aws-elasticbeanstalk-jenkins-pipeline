@@ -1,4 +1,4 @@
-# devops-infrastructure
+# ansible-aws-elasticbeanstalk-jenkins-pipeline
 This stack will provide a full CI/CD infrastructure on AWS using Ansible
 
 It will create the following resources:
