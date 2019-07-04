@@ -68,6 +68,7 @@ job(jobDeployName) {
             additionalParameters('-e "branch=\${project_app_branch_name}" -e "env='+ baseEnv +'"')
         }
     }
+    quietPeriod(10)
     publishers {
         wsCleanup()
     }

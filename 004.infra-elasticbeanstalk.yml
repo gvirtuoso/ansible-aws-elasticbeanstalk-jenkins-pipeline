@@ -24,13 +24,13 @@
     - name: Elastic Beanstalk | Creating the application platform
       vars:
         msg: |
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-          Task done!
-          Your application and environments are being created.
-          Check on your AWS account the status of each one.
-
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          .                                                                                .
+          . Task done!                                                                     .
+          . Your application and environments are being created.                           .
+          . Check on your AWS account the status of each one.                              .
+          .                                                                                .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
       debug: msg="{{ msg.split('\n') }}"

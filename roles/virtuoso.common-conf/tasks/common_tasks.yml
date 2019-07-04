@@ -10,6 +10,7 @@
   - name: COMMON | Configure users for build images with docker
     command: "{{ item }}"
     with_items:
+      - usermod -aG docker ubuntu
       - usermod -aG docker jenkins
 
   - name: COMMON | Install additional softwares

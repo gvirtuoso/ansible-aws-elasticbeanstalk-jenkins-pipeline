@@ -25,7 +25,7 @@
     - include_tasks: aws/tasks/ec2-instance.yml
     - include_tasks: aws/tasks/ec2-instance-warmup.yml
 
-- name: CI | Instance software setup
+- name: CI | Instance software setup 1/4
   hosts: "{{ host_group_name }}"
   become: true
   remote_user: ubuntu
@@ -52,9 +52,94 @@
     - roles/geerlingguy.jenkins
     - roles/virtuoso.ansible
     - roles/virtuoso.nginx-conf
-    - roles/virtuoso.jenkins-conf
     - roles/virtuoso.aws-conf
+
+- name: CI | Instance software setup 2/4
+  hosts: "{{ host_group_name }}"
+  become: true
+  vars:
+    ENV: "{{ AWS_PROFILE }}"
+    application: "pointr"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  roles:
     - roles/virtuoso.common-conf
+
+- name: CI | Instance software setup 3/4
+  hosts: local
+  connection: local
+  gather_facts: no
+  vars:
+    application: "virtuoso"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/ec2-key.yml
+    - aws/vars/vpc.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  tasks:
+    - name: EC2 | Getting instance facts
+      ec2_instance_facts:
+        filters:
+          instance-state-name: running
+          "tag:Name": "{{ application }}-{{ service }}"
+      register: ec2_instance_fact
+    - name: Stop the ec2 instance
+      local_action:
+        module: ec2
+        instance_ids:
+          - '{{ ec2_instance_fact.instances[0].instance_id }}'
+        state: stopped
+        wait: True
+    - name: Start the ec2 instance
+      local_action:
+        module: ec2
+        instance_ids:
+          - '{{ ec2_instance_fact.instances[0].instance_id }}'
+        state: running
+        wait: True
+    - name: Wait for SSH to come up on instance
+      wait_for:
+        host: "{{ ec2_instance_fact.instances[0].private_ip_address }}"
+        port: 22
+        delay: 10
+        timeout: 120
+        state: started
+      delegate_to: ubuntu@bastion
+
+- name: CI | Instance software setup 4/4
+  hosts: "{{ host_group_name }}"
+  become: true
+  remote_user: ubuntu
+  vars:
+    ENV: "{{ AWS_PROFILE }}"
+    application: "pointr"
+    service: "ci"
+  vars_files:
+    - aws/vars/profile.yml
+    - aws/vars/credentials.yml
+    - aws/vars/{{ service }}.yml
+  environment:
+    AWS_PROFILE: "{{ AWS_PROFILE }}"
+    AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+    AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+    AWS_REGION: "{{ AWS_REGION }}"
+  roles:
+    - roles/virtuoso.jenkins-conf
 
 - name: CI | Finalizing process
   hosts: local
@@ -75,12 +160,7 @@
     AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
     AWS_REGION: "{{ AWS_REGION }}"
   tasks:
-    - name: EC2 | Restarting instance
-      ec2:
-        instance_tags:
-          "tag:Name": "{{ application }}-{{ service }}"
-        state: restarted
-    - name: EC2 | Searching for ci/cd instances
+    - name: EC2 | Getting instance facts
       ec2_instance_facts:
         filters:
           instance-state-name: running
@@ -89,14 +169,18 @@
     - name: CI | Finalizing process
       vars:
         msg: |
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-          Task done!
-          Wait a few seconds while the instance reboot to apply some configurations.
-          After it, you can access your CI/CD server using the URL below
-          http://{{ ec2_instance_fact.instances[0].public_ip_address }}
-
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          .                                                                                .
+          . Task done!                                                                     .
+          . Wait a few seconds while the instance reboot to apply some configurations.     .
+          . After it, you can access your CI/CD server using the infos below               .
+          .                                                                                .
+          . URL........: http://{{ ec2_instance_fact.instances[0].public_ip_address }}                                                                                .
+          . User.......: {{ jenkins_admin_username }}                                                                                .
+          . Password...: {{ jenkins_admin_password }}                                                                                .
+          .                                                                                .
+          .                                                                                .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
+          . @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                                   .
       debug: msg="{{ msg.split('\n') }}"
