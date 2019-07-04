@@ -7,17 +7,18 @@
     application: "virtuoso"
     service: "bastion"
   vars_files:
-    - aws/vars/profile.yml
-    - aws/vars/credentials.yml
-    - aws/vars/ec2-key.yml
-    - aws/vars/vpc.yml
-    - aws/vars/{{ service }}.yml
+    - aws/vars/common/profile.yml
+    - aws/vars/common/credentials.yml
+    - aws/vars/infra/ec2-key.yml
+    - aws/vars/infra/vpc.yml
+    - aws/vars/infra/{{ service }}.yml
   environment:
     AWS_PROFILE: "{{ AWS_PROFILE }}"
     AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
     AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
     AWS_REGION: "{{ AWS_REGION }}"
   tasks:
+    - include_tasks: aws/tasks/set-sshkey-chmod.yml
     - include_tasks: aws/tasks/vpc-facts.yml
     - include_tasks: aws/tasks/ec2-sg.yml
     - include_tasks: aws/tasks/ec2-instance.yml

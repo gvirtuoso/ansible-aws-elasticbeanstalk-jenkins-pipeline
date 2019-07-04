@@ -7,10 +7,10 @@
     application: "virtuoso"
     service: "elasticbeanstalk"
   vars_files:
-    - aws/vars/profile.yml
-    - aws/vars/credentials.yml
-    - aws/vars/vpc.yml
-    - aws/vars/{{ service }}.yml
+    - aws/vars/common/profile.yml
+    - aws/vars/common/credentials.yml
+    - aws/vars/infra/vpc.yml
+    - aws/vars/infra/{{ service }}.yml
   environment:
     AWS_PROFILE: "{{ AWS_PROFILE }}"
     AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
