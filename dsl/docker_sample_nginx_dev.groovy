@@ -34,7 +34,7 @@ job(jobDeployName) {
     parameters {
         string{
             name("project_infra_automation_branch_name")
-            description("Branch name for devops-infrastructure")
+            description("Branch name for ansible-aws-elasticbeanstalk-jenkins-pipeline")
             defaultValue(baseBranch)
             trim(true)
         }
@@ -48,7 +48,7 @@ job(jobDeployName) {
     scm {
         git {
             remote {
-                github(projectOwner + "/devops-infrastructure", "https")
+                github(projectOwner + "/ansible-aws-elasticbeanstalk-jenkins-pipeline", "https")
             }
             branch("*/\${project_infra_automation_branch_name}")
         }

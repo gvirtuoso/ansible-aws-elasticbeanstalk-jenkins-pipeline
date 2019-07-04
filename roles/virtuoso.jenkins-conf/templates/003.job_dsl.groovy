@@ -32,7 +32,7 @@ configXml = configXml + "  <scm class='hudson.plugins.git.GitSCM' plugin='git@{{
 configXml = configXml + "    <configVersion>2</configVersion>"
 configXml = configXml + "    <userRemoteConfigs>"
 configXml = configXml + "      <hudson.plugins.git.UserRemoteConfig>"
-configXml = configXml + "        <url>https://github.com/gvirtuoso/devops-infrastructure.git</url>"
+configXml = configXml + "        <url>https://github.com/gvirtuoso/ansible-aws-elasticbeanstalk-jenkins-pipeline.git</url>"
 configXml = configXml + "      </hudson.plugins.git.UserRemoteConfig>"
 configXml = configXml + "    </userRemoteConfigs>"
 configXml = configXml + "    <branches>"
