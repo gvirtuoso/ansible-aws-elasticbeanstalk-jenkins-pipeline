@@ -9,8 +9,9 @@ It will create the following resources:
 - CI/CD Pipeline using Jenkins
 
 ---
-
-## 1) Requirements/Versions
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
+## 1) Requirement
 These are the versions of each requisite used during the development of this project.  
 In some cases, I've noticed that using different versions of these tools some errors could happen.  
 I'll encourage you to run the playbooks even if you have a different version of any of them, but keep in mind that if you are facing some issue the reason could be these versions.
@@ -22,8 +23,9 @@ I'll encourage you to run the playbooks even if you have a different version of 
 - `JQ` - Command-line JSON processor
 
 ---
-
-## 2) AWS Commando Line (aws-cli)
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
+## 2) AWS Command Line
 Following the best practices and to be compatible with this project, you should configure your AWS Command Line to use profiles.
 
 `IMPORTANT:` Be aware that I'll use your profile name to create unique identifiers on your AWS account.
@@ -42,8 +44,9 @@ This command will change the files at `<HOME_USER_FOLDER>/.aws`
 For more information about how to configure or even how to install the AWS Command Line you can access the  [AWS documentation](https://docs.aws.amazon.com/cli/index.html).
 
 ---
-
-## 3) Running playbooks
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
+## 3) Running Playbooks
 To run the playbooks in a proper way you have to pass your `AWS_PROFILE`, configured like in the previous step, on the command line.  
 This is the safest way to deal with your AWS credentials without exposing any sensitive data.
 
@@ -52,7 +55,8 @@ $ AWS_PROFILE=<PROFILE_NAME> ansible-playbook <playbook file>
 ```
 
 ---
-
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
 ## 4) Creating the infrastructure
 
 Run the steps below to create the entire CI/CD infrastructure.  
@@ -215,7 +219,8 @@ Good job!
 Now you already have your CI/CD server up and running.
 
 ---
-
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
 ## 5) Deployment
 
 Usually, I have the deployment files in another project, but for this example, trying to make it simple and didactic I keep the deployment files in the same project. 
@@ -269,10 +274,11 @@ The new version deployed.
 ![New Version Deployed](readme/img/020.png)
 
 ---
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
+## 6) Cleaning your workspace
 
-## 6) Dropping the resources
-
-You should drop the following resources:
+To undo all your work so far, drop the following resources:
 - Elastic Beanstalk
 - EC2 Instances
 - EC2 KeyPair
@@ -289,10 +295,15 @@ I'll list below some AWS screens to access and check if all the extra resources 
 - IAM Role
 
 ---
-
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
 ## Conclusion
 
 Here you have a full project to provisioning a CI/CD infrastructure.
 You can customize all var files also you can create new `Groovy Scripts` and new `Deployment Files` for your projects.
 
 Feel free to open an Issue ticket with suggestions, questions and bugs =D
+
+---
+###### *Navigate* | [*Top*](#ansible-aws-elasticbeanstalk-jenkins-pipeline) | [*1) Requirement*](#requirement) | [*2) AWS Command Line*](#2-aws-command-line) | [*3) Running playbooks*](#3-running-playbooks) | [*4) Creating the Infrastructure*](#4-creating-the-infrastructure) | [*5) Deployment*](#5-deployment) | [*6) Cleaning your workspace*](#6-cleaning-your-workspace) | [*Conclusion*](#conclusion) | 
+---
