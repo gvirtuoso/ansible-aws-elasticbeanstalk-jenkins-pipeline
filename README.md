@@ -169,7 +169,7 @@ You can click on each environment and access the public DNS to check if everythi
 ![Elastic Beanstalk Public DNS](readme/img/007.png)
 
 For fresh environments, the platform installs a Sample Application as you can see below.  
-After creating the CI/CD server (the next step) my version of the [docker-sample-nginx](https://github.com/gvirtuoso/docker-sample-nginx) will be deployed and replace this Sample Application.
+I'll replace that app on the deployment phase.
 
 ![Elastic Beanstalk Sample Application](readme/img/008.png)
 
@@ -191,7 +191,7 @@ During the configuration phase, using Groovy Scripts, I'll create a seeder job t
 In the [ci.yml](aws/vars/infra/ci.yml) var file you can configure a lot of details of your CI/CD server including:
 - `jenkins_admin_username` - Admin username
 - `jenkins_admin_password` - Admin password
-- `jenkins_version` - Usually I lock this value for the LTS version
+- `jenkins_version` - Usually I lock this value for the [LTS version](https://jenkins.io/changelog-stable/)
 - `jenkins_plugins_list` - All plugin IDs that you want to install on Jenkins
 
 `IMPORTANT:` If you get some error like (SSH timeout connection) while running the playbook, you can try again.  
@@ -223,6 +223,8 @@ Now you already have your CI/CD server up and running.
 ---
 ## 5) Deployment
 
+`IMPORTANT:` This phase will occur automatically, after install the CI/CD server. Here you will find details about whats happen when the deployment playbooks runs.
+
 Usually, I have the deployment files in another project, but for this example, trying to make it simple and didactic I keep the deployment files in the same project. 
 
 For this use case, where we have created an application on Elastic Beanstalk for [docker-sample-nginx](https://github.com/gvirtuoso/docker-sample-nginx) project.
@@ -247,7 +249,7 @@ $ AWS_PROFILE=<PROFILE_NAME> ansible-playbook 006.deploy-docker-sample-nginx.yml
 
 During the CI/CD server creation, a job seeder was created. This job scans the project looking for `Groovy` scripts and then after reading these files the job seeder creates all the other jobs implemented as `Groovy Scripts`.
 
-Check the images below about the entire process, finishing with the deployment of the docker-sample-nginx](https://github.com/gvirtuoso/docker-sample-nginx) version.  
+Check the images below about the entire process, finishing with the deployment of the [docker-sample-nginx](https://github.com/gvirtuoso/docker-sample-nginx) version.  
 
 Deployment process in execution:
 ![Deployment Process](readme/img/013.png)
